@@ -8,7 +8,10 @@ package carmetric;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -21,17 +24,24 @@ public class readData {
     private File inputFile;
     private ArrayList speedCell;
  
-    public readData(File inputFile){
-        this.inputFile = inputFile;
+    public readData(String filePath){
+        
+        this.inputFile = new File(filePath);
    }
   /**
    * Read data with opc package
    */
     public void readFile(int startNumber, int endNumber){
+        this.speedCell = new ArrayList();
         try{
         Workbook book = WorkbookFactory.create(inputFile);
         Sheet worksheet = book.getSheetAt(0);
-        
+        CellReference ref = new CellReference("K");
+        for(int n=11; n<23; n++){
+            Row r = worksheet.getRow(n);
+            Cell c = r.getCell(ref.getCol());
+            speedCell.add(c.getNumericCellValue());
+        }
         }catch(IOException | InvalidFormatException ex){
             ex.printStackTrace();
         }
