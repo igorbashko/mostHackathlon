@@ -31,7 +31,7 @@ public class readData {
   /**
    * Read data with opc package
    */
-    public void readFile(int startNumber, int endNumber){
+    public void readFile(){
         this.speedCell = new ArrayList();
         try{
         Workbook book = WorkbookFactory.create(inputFile);

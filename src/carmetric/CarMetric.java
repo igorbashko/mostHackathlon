@@ -28,6 +28,8 @@ public class CarMetric extends Application {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Hello World!");
+                readData reader = new readData("report.xls");
+                reader.readFile();
             }
         });
         
