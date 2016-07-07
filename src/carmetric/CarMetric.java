@@ -37,7 +37,7 @@ public class CarMetric extends Application {
         StackPane root = new StackPane();
         root.getChildren().add(btn);
         
-        Scene scene = new Scene(root, 300, 250);
+        Scene scene = new Scene(root, 700, 1250);
         
         primaryStage.setTitle("Hello World!");
         primaryStage.setScene(scene);
