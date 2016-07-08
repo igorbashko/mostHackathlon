@@ -13,6 +13,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart.Data;
@@ -24,7 +25,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.scene.text.Font;
 
 /**
  *
@@ -32,6 +35,7 @@ import javafx.stage.Stage;
  */
 public class CarMetric extends Application {
     private Label accValue;
+    private Label dangerk;
     private TableView table;
     private ObservableList<tableData> tableD;
     private readCalculate runner = new readCalculate("report.xls");
@@ -39,26 +43,35 @@ public class CarMetric extends Application {
     @Override
     public void start(Stage primaryStage) {
         Button btn = new Button();
-        btn.setText("Say 'Hello World'");
+        btn.setText("Подсичтать риск");
         btn.setOnAction(new EventHandler<ActionEvent>() {
             
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Hello World!");
+                System.out.println("Телематика");
                 runner.readFile();
                 runner.calculateAcc();
                 fillTable();
                 setAccValue(Double.toString(runner.getdangerRating()));
+                setDangerK(Double.toString(runner.getDanger()));
             }
         });
         
         VBox root = new VBox();
-        root.alignmentProperty().setValue(Pos.CENTER);
-        root.getChildren().addAll(Table(),btn, addGraphics());
+        root.alignmentProperty().setValue(Pos.TOP_CENTER);
+        root.setPadding(new Insets(20, 20, 20, 20));
+        root.setSpacing(15);
+        Label dangerLabel = new Label("Риск");
+        dangerLabel.setFont(new Font("Arial", 35));
+        this.dangerk = new Label();
+        this.dangerk.setFont(new Font("Arial", 35));
+        this.dangerk.setTextFill(Color.BLUE);
+        root.getChildren().addAll(Heading(), Table(),btn, addGraphics(), dangerLabel,
+                this.dangerk);
         
         Scene scene = new Scene(root, 700, 1250);
         
-        primaryStage.setTitle("Hello World!");
+        primaryStage.setTitle("Телематика");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -68,14 +81,23 @@ public class CarMetric extends Application {
     private HBox addGraphics(){
         HBox accValueC = new HBox();//container which will be held acceleration value label and value
         accValueC.alignmentProperty().setValue(Pos.CENTER);
-        Label accLabelN = new Label("Среднее ускорение");
+        Label accLabelN = new Label("Ускорение ");
+        accLabelN.setFont(new Font("Arial", 35));
         accValue = new Label(); //acceleration value itself
+        accValue.setFont(new Font("Arial", 35));
+        accValue.setTextFill(Color.RED);
         accValueC.getChildren().addAll(accLabelN, accValue);
         return accValueC;
     }
  
     private void setAccValue(String value){
-        this.accValue.setText(value);
+        this.accValue.setText(value + " м/с^2");
+    }
+    /**
+     * Sets k of danger
+     */
+    private void setDangerK(String value){
+        this.dangerk.setText(value);
     }
     /**
      * Creating table with data
@@ -83,7 +105,7 @@ public class CarMetric extends Application {
     private TableView Table(){
          this.table = new TableView();
         TableColumn time = new TableColumn("Время");
-        time.setMinWidth(100);
+        time.setMinWidth(300);
         time.setCellValueFactory(
         new PropertyValueFactory<>("time"));
         TableColumn speed = new TableColumn("Скорость");
@@ -110,6 +132,12 @@ public class CarMetric extends Application {
        /**
      * @param args the command line arguments
      */
+    private Label Heading(){
+        Label heading = new Label("Машина с гос № *** EN");
+        heading.setFont(new Font("Arial", 26));
+        
+        return heading;
+    }
     public static void main(String[] args) {
         launch(args);
     }
