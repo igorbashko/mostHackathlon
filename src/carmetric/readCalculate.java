@@ -23,6 +23,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import java.lang.Integer;
+import java.util.Calendar;
 import java.util.List;
 /**
  * Read data from excel file about car speed and time information 
@@ -34,7 +35,7 @@ public class readCalculate {
     private List<Double> accelerationCells;
     private List<Date> timeCells;
     private Map<Integer, Boolean> dayNight = new HashMap<Integer, Boolean>();
-    private Double dangerRating;
+    private Double acc; //final acceleration of the car
  
     public readCalculate(String filePath){
         
@@ -49,9 +50,9 @@ public class readCalculate {
         try{
         Workbook book = WorkbookFactory.create(inputFile);
         Sheet worksheet = book.getSheetAt(0);
-        CellReference speed = new CellReference("K");
-        CellReference time = new CellReference("I");
-        for(int n=11; n<23; n++){
+        CellReference speed = new CellReference("D");
+        CellReference time = new CellReference("B");
+        for(int n=11; n<60; n++){
             Row r = worksheet.getRow(n);
             Cell speedC = r.getCell(speed.getCol());
             speedCell.add((int) speedC.getNumericCellValue());
@@ -68,6 +69,11 @@ public class readCalculate {
     private Date timeDefinder(String value) throws ParseException{
            DateFormat formatter = new SimpleDateFormat  ("HH:mm:ss");
            Date drivingTime = new Date(formatter.parse(value).getTime());
+        Calendar c = Calendar.getInstance();
+        c.setTime(drivingTime);
+        c.set(Calendar.YEAR, 2016);
+        c.set(Calendar.MONTH, 5);
+        drivingTime = c.getTime();
            return drivingTime;
         }
     /**
@@ -91,7 +97,7 @@ public class readCalculate {
      */
    public void calculateAcc(){
        int index =0; //index of timeCells list
-       this.dangerRating = 0.0;
+       this.acc = 0.0;
        for(Date time:timeCells){
            dayOrNight(time, index);
        index++;    
@@ -106,9 +112,22 @@ public class readCalculate {
             double acceleration = (this.speedCell.get(i) - this.speedCell.get(i+1))*k;
             this.accelerationCells.add(Math.abs(acceleration));
           }
-        for(Double rating:this.accelerationCells){
-            this.dangerRating+=rating;
+        for(Double acc:this.accelerationCells){
+            this.acc+=acc;
         }
-        this.dangerRating = this.dangerRating/this.accelerationCells.size();
-   } 
-}
+        this.acc = 
+                Math.round((this.acc/this.accelerationCells.size()*1000/3600)*100d)/100d;
+   }
+   
+   public double getdangerRating(){
+     return this.acc;  
+   }
+ public List<Integer> getSpeed(){
+    return this.speedCell; 
+    }  
+
+    public List<Date> getTime() {
+       return this.timeCells;
+        
+    }
+ }
